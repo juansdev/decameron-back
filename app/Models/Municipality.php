@@ -4,20 +4,22 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property mixed $code
- * @property mixed $status
  * @property mixed $name
- * @method static find(mixed $department_id)
+ * @property mixed $code
+ * @property bool|mixed $status
  * @method static create(array $array)
  */
-class Department extends Model
+class Municipality extends Model
 {
     use HasFactory;
 
+    protected $table = 'municipalities';
+
     protected $fillable = [
+        'department_id',
         'name',
         'code',
         'status'
@@ -27,8 +29,8 @@ class Department extends Model
         'status' => 'boolean',
     ];
 
-    public function municipalities(): HasMany
+    public function department(): BelongsTo
     {
-        return $this->hasMany(Municipality::class);
+        return $this->belongsTo(Department::class);
     }
 }

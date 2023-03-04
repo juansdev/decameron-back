@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Department;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
 class DepartmentController extends Controller
 {
@@ -18,7 +17,7 @@ class DepartmentController extends Controller
     {
         $departments = Department::all();
 
-        return response()->json($departments);
+        return response()->json(['data' => $departments]);
     }
 
     /**
@@ -29,13 +28,17 @@ class DepartmentController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
-        $department = new Department();
-        $department->name = $request->input('name');
-        $department->code = $request->input('code');
-        $department->status = $request->input('status', true);
-        $department->save();
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'code' => 'required|integer',
+        ]);
 
-        return response()->json(['message' => 'Departamento creado correctamente', 'department' => $department]);
+        $department = Department::create([
+            'name' => $request->input('name'),
+            'code' => $request->input('code')
+        ]);
+
+        return response()->json(['message' => 'Departamento creado correctamente', 'data' => $department]);
     }
 
     /**
@@ -46,7 +49,7 @@ class DepartmentController extends Controller
      */
     public function show(Department $department): JsonResponse
     {
-        return response()->json($department);
+        return response()->json(['data' => $department]);
     }
 
     /**
@@ -58,21 +61,24 @@ class DepartmentController extends Controller
      */
     public function update(Request $request, Department $department): JsonResponse
     {
-        $department->name = $request->input('name');
-        $department->code = $request->input('code');
-        $department->status = $request->input('status', true);
-        $department->save();
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'code' => 'required|integer',
+            'status' => 'nullable|boolean'
+        ]);
 
-        return response()->json(['message' => 'Departamento actualizado correctamente', 'department' => $department]);
+        $department->update($request->all());
+
+        return response()->json(['message' => 'Departamento actualizado correctamente', 'data' => $department]);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Change the status of the specified resource in storage.
      *
      * @param Department $department
      * @return JsonResponse
      */
-    public function destroy(Department $department): JsonResponse
+    public function changeStatus(Department $department): JsonResponse
     {
         $department->status = false;
         $department->save();
