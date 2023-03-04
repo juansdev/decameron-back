@@ -17,10 +17,11 @@ class DepartmentControllerTest extends TestCase
         $departments = Department::factory()->count(3)->create();
 
         // Llama al método index()
-        $response = $this->getJson('/api/departments');
+        $response = $this->getJson(route('departments.index'));
 
         // Verifica que la respuesta tenga el código de estado correcto (200)
-        $response->assertStatus(200);
+        $response->assertOk();
+        $response->assertJsonCount(3, 'data');
 
         // Verifica que se devuelvan los departamentos correctos
         $response->assertJson(['data' => $departments->toArray()]);
@@ -30,18 +31,22 @@ class DepartmentControllerTest extends TestCase
     {
         // Crea un departamento de prueba
         $department = Department::factory()->make();
-
-        // Llama al método store() con los datos del departamento
-        $response = $this->postJson('/api/departments', [
+        $data = [
             'name' => $department->name,
             'code' => $department->code
-        ]);
+        ];
+        // Llama al método store() con los datos del departamento
+        $response = $this->postJson(route('departments.store'), $data);
 
         // Verifica que la respuesta tenga el código de estado correcto (201)
-        $response->assertStatus(201);
+        $response->assertStatus(Response::HTTP_CREATED);
+        $this->assertDatabaseHas('departments', $data);
 
         // Verifica que se haya creado el departamento correctamente
-        $response->assertJson(['message' => 'Departamento creado correctamente']);
+        $response->assertJsonFragment([
+            'name' => $department['name'],
+            'code' => $department['code']
+        ]);
     }
 
     public function testShow()
@@ -50,10 +55,10 @@ class DepartmentControllerTest extends TestCase
         $department = Department::factory()->create();
 
         // Llama al método show() con el ID del departamento
-        $response = $this->getJson('/api/departments/' . $department->id);
+        $response = $this->getJson(route('departments.show', $department));
 
         // Verifica que la respuesta tenga el código de estado correcto (200)
-        $response->assertStatus(200);
+        $response->assertOk();
 
         // Verifica que se devuelva el departamento correcto
         $response->assertJson(['data' => $department->toArray()]);
@@ -68,24 +73,21 @@ class DepartmentControllerTest extends TestCase
     {
         // Create a department
         $department = Department::factory()->create();
-
-        // Send PUT request to update the department
-        $response = $this->json('PUT', "/api/departments/{$department->id}", [
-            'name' => 'Updated Department',
+        $data = [
+            'name' => 'Departamento Actualizado',
             'code' => 1234,
             'status' => false
-        ]);
+        ];
+        // Send PUT request to update the department
+        $response = $this->putJson(route('departments.update', $department), $data);
 
         // Assert response
-        $response->assertStatus(Response::HTTP_OK);
-        $response->assertJson([
-            'message' => 'Departamento actualizado correctamente'
-        ]);
-        $this->assertDatabaseHas('departments', [
-            'id' => $department->id,
-            'name' => 'Updated Department',
-            'code' => 1234,
-            'status' => false
+        $response->assertOk();
+        $this->assertDatabaseHas('departments', $data);
+        $response->assertJsonFragment([
+            'name' => $data['name'],
+            'code' => $data['code'],
+            'status' => $data['status'],
         ]);
     }
 
@@ -100,16 +102,15 @@ class DepartmentControllerTest extends TestCase
         $department = Department::factory()->create();
 
         // Send PUT request to change the status of the department
-        $response = $this->json('PUT', "/api/departments/{$department->id}/status");
+        $response = $this->put(route('departments.changeStatus', $department->id));
 
         // Assert response
-        $response->assertStatus(Response::HTTP_OK);
+        $response->assertStatus(200);
         $response->assertJson([
             'message' => 'El estado del departamento se actualizo correctamente'
         ]);
-        $this->assertDatabaseHas('departments', [
-            'id' => $department->id,
-            'status' => false
-        ]);
+
+        // Assert that the municipality status has changed to false
+        $this->assertFalse($department->fresh()->status);
     }
 }
