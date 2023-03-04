@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property mixed $name
  * @property mixed $code
  * @property bool|mixed $status
+ * @property mixed $id
  * @method static create(array $array)
  */
 class Municipality extends Model

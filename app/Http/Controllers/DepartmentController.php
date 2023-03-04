@@ -29,7 +29,7 @@ class DepartmentController extends Controller
     public function store(Request $request): JsonResponse
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:departments,name',
             'code' => 'required|integer',
         ]);
 
@@ -38,7 +38,7 @@ class DepartmentController extends Controller
             'code' => $request->input('code')
         ]);
 
-        return response()->json(['message' => 'Departamento creado correctamente', 'data' => $department]);
+        return response()->json(['message' => 'Departamento creado correctamente', 'data' => $department], 201);
     }
 
     /**
@@ -62,7 +62,7 @@ class DepartmentController extends Controller
     public function update(Request $request, Department $department): JsonResponse
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:departments,name,' . $department->id,
             'code' => 'required|integer',
             'status' => 'nullable|boolean'
         ]);

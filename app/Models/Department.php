@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property mixed $code
  * @property mixed $status
  * @property mixed $name
+ * @property mixed $id
  * @method static find(mixed $department_id)
  * @method static create(array $array)
  */
