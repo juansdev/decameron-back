@@ -5,13 +5,12 @@ namespace Tests\Unit;
 use App\Models\Department;
 use App\Models\Municipality;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
 use Tests\TestCase;
 
 class MunicipalityControllerTest extends TestCase
 {
-    use RefreshDatabase, WithFaker;
+    use RefreshDatabase;
 
     public function testIndex()
     {
