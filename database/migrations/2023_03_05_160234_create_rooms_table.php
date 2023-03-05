@@ -15,13 +15,13 @@ class CreateRoomsTable extends Migration
     {
         Schema::create('rooms', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('hotel_id');
+            $table->unsignedBigInteger('municipal_hotel_id');
             $table->unsignedBigInteger('room_type_id');
             $table->unsignedBigInteger('room_accommodation_id');
             $table->boolean('status')->default(true);
             $table->timestamps();
 
-            $table->foreign('hotel_id')->references('id')->on('hotels');
+            $table->foreign('municipal_hotel_id')->references('id')->on('municipal_hotels');
             $table->foreign('room_type_id')->references('id')->on('room_types');
             $table->foreign('room_accommodation_id')->references('id')->on('room_accommodations');
         });

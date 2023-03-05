@@ -94,7 +94,7 @@ class MunicipalityController extends Controller
 
         return response()->json([
             'message' => 'El municipio fue actualizado correctamente',
-            'municipality' => $municipality->load('department')
+            'data' => $municipality->load('department')
         ]);
     }
 

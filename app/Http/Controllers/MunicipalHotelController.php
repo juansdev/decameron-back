@@ -114,20 +114,20 @@ class MunicipalHotelController extends Controller
 
         return response()->json([
             'message' => 'El hotel del municipio fue actualizado correctamente',
-            'municipality' => $municipalHotels->load(['hotel', 'municipality'])
+            'data' => $municipalHotels->load(['hotel', 'municipality'])
         ]);
     }
 
     /**
      * Change the status of the specified resource in storage.
      *
-     * @param MunicipalHotel $municipalHotels
+     * @param MunicipalHotel $municipalHotel
      * @return JsonResponse
      */
-    public function changeStatus(MunicipalHotel $municipalHotels): JsonResponse
+    public function changeStatus(MunicipalHotel $municipalHotel): JsonResponse
     {
-        $municipalHotels->status = false;
-        $municipalHotels->save();
+        $municipalHotel->status = false;
+        $municipalHotel->save();
 
         return response()->json(['message' => 'El estado del hotel del municipio se actualizo correctamente']);
     }

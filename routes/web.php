@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\HotelController;
 use App\Http\Controllers\MunicipalHotelController;
+use App\Http\Controllers\RoomController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -23,4 +24,7 @@ Route::resource('hotels', HotelController::class);
 Route::put('hotels/{hotel}/status', [HotelController::class, 'changeStatus'])->name('hotels.changeStatus');
 
 Route::resource('municipal-hotels', MunicipalHotelController::class);
-Route::put('municipal-hotels/{municipalHotels}/status', [MunicipalHotelController::class, 'changeStatus'])->name('municipal-hotels.changeStatus');
+Route::put('municipal-hotels/{municipalHotel}/status', [MunicipalHotelController::class, 'changeStatus'])->name('municipal-hotels.changeStatus');
+
+Route::resource('rooms', RoomController::class);
+Route::put('rooms/{room}/status', [RoomController::class, 'changeStatus'])->name('rooms.changeStatus');

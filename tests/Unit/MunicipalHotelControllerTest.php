@@ -72,7 +72,7 @@ class MunicipalHotelControllerTest extends TestCase
         // Crea un municipio, hotel y hotel del municipio
         $municipality = Municipality::factory()->create(['id' => 1]);
         $hotel = Hotel::factory()->create(['id' => 1]);
-        $municipalHotels = MunicipalHotel::factory()->create();
+        $municipalHotel = MunicipalHotel::factory()->create();
         $data = [
             'address' => 'Hotel del Municipio Actualizado',
             'number_rooms' => 1234,
@@ -81,7 +81,7 @@ class MunicipalHotelControllerTest extends TestCase
             'status' => false
         ];
         // Envía una petición PUT para actualizar el hotel del municipio
-        $response = $this->putJson(route('municipal-hotels.update', $municipalHotels), $data);
+        $response = $this->putJson(route('municipal-hotels.update', $municipalHotel), $data);
 
         // Verifica que la respuesta tenga el código de estado correcto (200)
         $response->assertOk();
