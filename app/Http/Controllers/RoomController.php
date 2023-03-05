@@ -57,6 +57,17 @@ class RoomController extends Controller
                 ], 404);
         }
 
+        $roomsByHotel = Room::where('municipal_hotel_id', $validatedData['municipal_hotel_id']);
+        if ($roomsByHotel->count() > $municipalHotel->number_rooms)
+            return response()->json([
+                'message' => 'El hotel ya alcanzo el máximo de habitaciones'
+            ], 400);
+        else if ($roomsByHotel->where('room_type_id', $validatedData['room_type_id'])
+            ->where('room_accommodation_id', $validatedData['room_accommodation_id'])
+            ->exists())
+            return response()->json([
+                'message' => 'El hotel ya cuenta con una habitación del tipo ' . $roomType->name . ' y de acomodación ' . $roomAccommodation->name], 400);
+
         $room = Room::create($validatedData);
 
         return response()->json([

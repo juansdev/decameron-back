@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @method static create(array $validatedData)
+ * @method static where(string $string, mixed $municipal_hotel_id)
  * @property false|mixed $status
  */
 class Room extends Model
