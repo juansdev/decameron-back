@@ -7,31 +7,21 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property mixed $code
- * @property mixed $status
- * @property mixed $name
- * @property mixed $id
- * @method static find(mixed $department_id)
- * @method static create(array $array)
+ * @method static find(mixed $hotel_id)
  */
-class Department extends Model
+class Hotel extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'name',
-        'code',
+        'nit',
         'status'
     ];
 
     protected $casts = [
-        'status' => 'boolean',
+        'status' => 'boolean'
     ];
-
-    public function municipalities(): HasMany
-    {
-        return $this->hasMany(Municipality::class);
-    }
 
     public function municipalHotels(): HasMany
     {

@@ -23,7 +23,7 @@ class MunicipalityFactory extends Factory
             },
             'name' => $this->faker->city,
             'code' => $this->faker->numberBetween(1, 100),
-            'status' => $this->faker->boolean(75)
+            'status' => $this->faker->boolean(),
         ];
     }
 }

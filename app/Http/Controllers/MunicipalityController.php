@@ -43,13 +43,7 @@ class MunicipalityController extends Controller
                 'message' => 'El departamento no fue encontrado'
             ], 404);
 
-        $municipality = new Municipality([
-            'name' => $validatedData['name'],
-            'code' => $validatedData['code'],
-            'status' => $validatedData['status'] ?? true
-        ]);
-
-        $department->municipalities()->save($municipality);
+        $municipality = Municipality::create($validatedData);
 
         return response()->json([
             'message' => 'El municipio fue creado correctamente',
@@ -65,7 +59,7 @@ class MunicipalityController extends Controller
      */
     public function show(Municipality $municipality): JsonResponse
     {
-        $municipality->load('department');
+        $municipality = Municipality::with('department')->find($municipality->id);
         return response()->json(['data' => $municipality]);
     }
 
@@ -95,9 +89,7 @@ class MunicipalityController extends Controller
         $municipality->name = $validatedData['name'];
         $municipality->code = $validatedData['code'];
         $municipality->status = $validatedData['status'] ?? true;
-
         $municipality->department()->associate($department);
-
         $municipality->save();
 
         return response()->json([

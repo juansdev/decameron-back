@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\HotelController;
+use App\Http\Controllers\MunicipalHotelController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,3 +18,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::resource('hotels', HotelController::class);
+Route::put('hotels/{hotel}/status', [HotelController::class, 'changeStatus'])->name('hotels.changeStatus');
+
+Route::resource('municipal-hotels', MunicipalHotelController::class);
+Route::put('municipal-hotels/{municipalHotels}/status', [MunicipalHotelController::class, 'changeStatus'])->name('municipal-hotels.changeStatus');

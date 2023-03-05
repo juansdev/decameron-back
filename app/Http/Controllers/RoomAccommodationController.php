@@ -49,6 +49,7 @@ class RoomAccommodationController extends Controller
      */
     public function show(RoomAccommodation $roomAccommodation): JsonResponse
     {
+        $roomAccommodation = RoomAccommodation::find($roomAccommodation->id);
         return response()->json([
             'data' => $roomAccommodation,
         ]);

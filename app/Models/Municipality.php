@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property bool|mixed $status
  * @property mixed $id
  * @method static create(array $array)
+ * @method static find(mixed $department_id)
  */
 class Municipality extends Model
 {

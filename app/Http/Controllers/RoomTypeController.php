@@ -44,6 +44,7 @@ class RoomTypeController extends Controller
      */
     public function show(RoomType $roomType): JsonResponse
     {
+        $roomType = RoomType::find($roomType->id);
         return response()->json(['data' => $roomType]);
     }
 

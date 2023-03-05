@@ -16,7 +16,6 @@ class DepartmentController extends Controller
     public function index(): JsonResponse
     {
         $departments = Department::all();
-
         return response()->json(['data' => $departments]);
     }
 
@@ -28,15 +27,12 @@ class DepartmentController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'name' => 'required|string|max:255|unique:departments,name',
             'code' => 'required|integer',
         ]);
 
-        $department = Department::create([
-            'name' => $request->input('name'),
-            'code' => $request->input('code')
-        ]);
+        $department = Department::create($validatedData);
 
         return response()->json(['message' => 'Departamento creado correctamente', 'data' => $department], 201);
     }
@@ -49,6 +45,7 @@ class DepartmentController extends Controller
      */
     public function show(Department $department): JsonResponse
     {
+        $department = Department::find($department->id);
         return response()->json(['data' => $department]);
     }
 
@@ -61,13 +58,13 @@ class DepartmentController extends Controller
      */
     public function update(Request $request, Department $department): JsonResponse
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'name' => 'required|string|max:255|unique:departments,name,' . $department->id,
             'code' => 'required|integer',
             'status' => 'nullable|boolean'
         ]);
 
-        $department->update($request->all());
+        $department->update($validatedData);
 
         return response()->json(['message' => 'Departamento actualizado correctamente', 'data' => $department]);
     }

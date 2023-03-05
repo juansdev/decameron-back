@@ -5,7 +5,7 @@ namespace Tests\Unit;
 use App\Models\Department;
 use App\Models\Municipality;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\Response;
+use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 
 class MunicipalityControllerTest extends TestCase
