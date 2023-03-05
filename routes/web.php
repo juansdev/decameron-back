@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\RoomTypeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,6 +16,3 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-
-Route::resource('room-types', RoomTypeController::class);
-Route::put('room-types/{roomType}/status', [RoomTypeController::class, 'changeStatus'])->name('room-types.changeStatus');

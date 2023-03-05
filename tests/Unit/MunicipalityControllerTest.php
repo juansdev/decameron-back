@@ -14,31 +14,34 @@ class MunicipalityControllerTest extends TestCase
 
     public function testIndex()
     {
+        // Crea algunos municipios de prueba
         $municipalities = Municipality::factory()->count(3)->create();
-
         $response = $this->getJson(route('municipalities.index'));
 
+        // Verifica que la respuesta tenga el código de estado correcto (200)
         $response->assertOk();
         $response->assertJsonCount(3, 'data');
+
+        // Verifica que se devuelvan los municipios correctos
         $response->assertJson(['data' => $municipalities->toArray()]);
     }
 
-    /**
-     * @test
-     */
     public function testStore()
     {
+        // Crea un municipio de prueba
         $municipality = Municipality::factory()->make();
         $data = [
             'name' => $municipality->name,
             'code' => $municipality->code,
             'department_id' => $municipality->department_id,
         ];
-
         $response = $this->postJson(route('municipalities.store'), $data);
 
+        // Verifica que la respuesta tenga el código de estado correcto (201)
         $response->assertStatus(Response::HTTP_CREATED);
         $this->assertDatabaseHas('municipalities', $data);
+
+        // Verifica que se haya creado el municipio correctamente
         $response->assertJsonFragment([
             'name' => $municipality['name'],
             'code' => $municipality['code'],
@@ -48,16 +51,22 @@ class MunicipalityControllerTest extends TestCase
 
     public function testShow()
     {
+        // Crea un municipio de prueba
         $municipality = Municipality::factory()->create();
 
+        // Llama al método show() con el ID del municipio
         $response = $this->getJson(route('municipalities.show', $municipality));
 
+        // Verifica que la respuesta tenga el código de estado correcto (200)
         $response->assertOk();
+
+        // Verifica que se devuelva el municipio correcto
         $response->assertJson(['data' => $municipality->toArray()]);
     }
 
     public function testUpdate()
     {
+        // Crea un departamento y municipio
         $department = Department::factory()->create(['id' => 1]);
         $municipality = Municipality::factory()->create();
         $data = [
@@ -66,10 +75,13 @@ class MunicipalityControllerTest extends TestCase
             'department_id' => $department->id,
             'status' => false
         ];
+        // Envía una petición PUT para actualizar el municipio
         $response = $this->putJson(route('municipalities.update', $municipality), $data);
 
+        // Verifica que la respuesta tenga el código de estado correcto (200)
         $response->assertOk();
         $this->assertDatabaseHas('municipalities', $data);
+        // Verifica que se devuelva el municipio correcto
         $response->assertJsonFragment([
             'name' => $data['name'],
             'code' => $data['code'],
@@ -78,26 +90,21 @@ class MunicipalityControllerTest extends TestCase
         ]);
     }
 
-    /**
-     * Test changeStatus method.
-     *
-     * @return void
-     */
     public function testChangeStatus(): void
     {
-        // Create a Municipality instance
+        // Crea un municipio
         $municipality = Municipality::factory()->create();
 
-        // Make a PUT request to change the municipality status
+        // Envía una petición PUT para cambiar el estado del municipio
         $response = $this->put(route('municipalities.changeStatus', $municipality->id));
 
-        // Assert that the response status is 200
+        // Verifica que la respuesta tenga el código de estado correcto (200)
         $response->assertStatus(200);
         $response->assertJson([
             'message' => 'El estado del municipio se actualizo correctamente'
         ]);
 
-        // Assert that the municipality status has changed to false
+        // Verifica que se devuelva el estado del municipio sea false
         $this->assertFalse($municipality->fresh()->status);
     }
 }

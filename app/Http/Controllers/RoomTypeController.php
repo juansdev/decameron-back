@@ -27,13 +27,11 @@ class RoomTypeController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'name' => 'required|string|max:255|unique:room_types,name'
         ]);
 
-        $roomType = RoomType::create([
-            'name' => $request->input('name')
-        ]);
+        $roomType = RoomType::create($validatedData);
 
         return response()->json(['message' => 'Tipo de habitación creado correctamente', 'data' => $roomType], 201);
     }
@@ -58,12 +56,12 @@ class RoomTypeController extends Controller
      */
     public function update(Request $request, RoomType $roomType): JsonResponse
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'name' => 'required|string|max:255|unique:room_types,name,' . $roomType->id,
             'status' => 'nullable|boolean'
         ]);
 
-        $roomType->update($request->all());
+        $roomType->update($validatedData);
 
         return response()->json(['message' => 'Tipo de habitación actualizado correctamente', 'data' => $roomType]);
     }

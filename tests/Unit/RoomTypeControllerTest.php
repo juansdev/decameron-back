@@ -11,20 +11,17 @@ class RoomTypeControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-
     public function testIndex()
     {
         // Crea algunos tipos de habitaciones de prueba
         $roomTypes = RoomType::factory()->count(3)->create();
-
-        // Llama al método index()
         $response = $this->getJson(route('room-types.index'));
 
         // Verifica que la respuesta tenga el código de estado correcto (200)
         $response->assertOk();
         $response->assertJsonCount(3, 'data');
 
-        // Verifica que se devuelvan los departamentos correctos
+        // Verifica que se devuelvan los tipos de habitaciones correctos
         $response->assertJson(['data' => $roomTypes->toArray()]);
     }
 
@@ -35,7 +32,6 @@ class RoomTypeControllerTest extends TestCase
         $data = [
             'name' => $roomType->name
         ];
-        // Envía la solicitud con el token CSRF en el encabezado
         $response = $this->postJson(route('room-types.store'), $data);
 
         // Verifica que la respuesta tenga el código de estado correcto (201)
@@ -71,12 +67,13 @@ class RoomTypeControllerTest extends TestCase
             'name' => 'Tipo de habitación actualizado',
             'status' => false
         ];
-        // Send PUT request to update the department
+        // Envía una petición PUT para actualizar el tipo de habitación
         $response = $this->putJson(route('room-types.update', $roomType), $data);
 
-        // Assert response
+        // Verifica que la respuesta tenga el código de estado correcto (200)
         $response->assertOk();
         $this->assertDatabaseHas('room_types', $data);
+        // Verifica que se devuelva el tipo de habitación correcto
         $response->assertJsonFragment([
             'name' => $data['name'],
             'status' => $data['status'],
@@ -85,18 +82,19 @@ class RoomTypeControllerTest extends TestCase
 
     public function testChangeStatus()
     {
-        // Create a department
+        // Crea un tipo de habitación
         $roomType = RoomType::factory()->create();
 
-        // Send PUT request to change the status of the department
+        // Envía una petición PUT para cambiar el estado del tipo de habitación
         $response = $this->put(route('room-types.changeStatus', $roomType->id));
 
-        // Assert response
+        // Verifica que la respuesta tenga el código de estado correcto (200)
         $response->assertStatus(200);
         $response->assertJson([
             'message' => 'El estado del tipo de habitación se actualizo correctamente'
         ]);
 
+        // Verifica que se devuelva el estado del tipo de habitación sea false
         $this->assertFalse($roomType->fresh()->status);
     }
 }

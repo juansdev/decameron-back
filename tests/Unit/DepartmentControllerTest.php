@@ -15,8 +15,6 @@ class DepartmentControllerTest extends TestCase
     {
         // Crea algunos departamentos de prueba
         $departments = Department::factory()->count(3)->create();
-
-        // Llama al método index()
         $response = $this->getJson(route('departments.index'));
 
         // Verifica que la respuesta tenga el código de estado correcto (200)
@@ -35,7 +33,6 @@ class DepartmentControllerTest extends TestCase
             'name' => $department->name,
             'code' => $department->code
         ];
-        // Llama al método store() con los datos del departamento
         $response = $this->postJson(route('departments.store'), $data);
 
         // Verifica que la respuesta tenga el código de estado correcto (201)
@@ -64,26 +61,22 @@ class DepartmentControllerTest extends TestCase
         $response->assertJson(['data' => $department->toArray()]);
     }
 
-    /**
-     * Test update department
-     *
-     * @return void
-     */
     public function testUpdate()
     {
-        // Create a department
+        // Crea un departamento
         $department = Department::factory()->create();
         $data = [
             'name' => 'Departamento Actualizado',
             'code' => 1234,
             'status' => false
         ];
-        // Send PUT request to update the department
+        // Envía una petición PUT para actualizar el departamento
         $response = $this->putJson(route('departments.update', $department), $data);
 
-        // Assert response
+        // Verifica que la respuesta tenga el código de estado correcto (200)
         $response->assertOk();
         $this->assertDatabaseHas('departments', $data);
+        // Verifica que se devuelva el departamento correcto
         $response->assertJsonFragment([
             'name' => $data['name'],
             'code' => $data['code'],
@@ -91,26 +84,21 @@ class DepartmentControllerTest extends TestCase
         ]);
     }
 
-    /**
-     * Test change department status
-     *
-     * @return void
-     */
     public function testChangeStatus()
     {
-        // Create a department
+        // Crea un departamento
         $department = Department::factory()->create();
 
-        // Send PUT request to change the status of the department
+        // Envía una petición PUT para cambiar el estado del departamento
         $response = $this->put(route('departments.changeStatus', $department->id));
 
-        // Assert response
+        // Verifica que la respuesta tenga el código de estado correcto (200)
         $response->assertStatus(200);
         $response->assertJson([
             'message' => 'El estado del departamento se actualizo correctamente'
         ]);
 
-        // Assert that the municipality status has changed to false
+        // Verifica que se devuelva el estado del departamento sea false
         $this->assertFalse($department->fresh()->status);
     }
 }

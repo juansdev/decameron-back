@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\MunicipalityController;
+use App\Http\Controllers\RoomAccommodationController;
+use App\Http\Controllers\RoomTypeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -25,3 +27,9 @@ Route::put('departments/{department}/status', [DepartmentController::class, 'cha
 
 Route::resource('municipalities', MunicipalityController::class);
 Route::put('municipalities/{municipality}/status', [MunicipalityController::class, 'changeStatus'])->name('municipalities.changeStatus');
+
+Route::resource('room-types', RoomTypeController::class);
+Route::put('room-types/{roomType}/status', [RoomTypeController::class, 'changeStatus'])->name('room-types.changeStatus');
+
+Route::resource('room-accommodations', RoomAccommodationController::class);
+Route::put('room-accommodations/{roomAccommodation}/status', [RoomAccommodationController::class, 'changeStatus'])->name('room-accommodations.changeStatus');

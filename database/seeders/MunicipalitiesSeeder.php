@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use App\Models\Municipality;
 use Illuminate\Database\Seeder;
 
-class MunicipalitySeeder extends Seeder
+class MunicipalitiesSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -5646,11 +5646,7 @@ class MunicipalitySeeder extends Seeder
             'name' => 'CUMARIBO'
         ]];
         foreach ($municipalities as $municipality) {
-            Municipality::create([
-                'department_id' => $municipality['department_id'],
-                'name' => $municipality['name'],
-                'code' => $municipality['code'],
-            ]);
+            Municipality::create($municipality);
         }
     }
 }
