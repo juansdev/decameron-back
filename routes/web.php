@@ -16,6 +16,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('CSRF', function () {
+    return response()->json(['csrf' => csrf_token()]);
+});
+
 Route::resource('hotels', HotelController::class);
 Route::put('hotels/{hotel}/status', [HotelController::class, 'changeStatus'])->name('hotels.changeStatus');
 

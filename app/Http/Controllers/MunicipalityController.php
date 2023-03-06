@@ -14,9 +14,12 @@ class MunicipalityController extends Controller
      *
      * @return JsonResponse
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $municipalities = Municipality::with('department')->get();
+        $departmentId = $request->query('department_id');
+        $municipalities = Municipality::with('department');
+        if($departmentId) $municipalities->where('department_id', $departmentId)->orderBy('name');
+        $municipalities = $municipalities->get();
         return response()->json([
             'data' => $municipalities
         ]);

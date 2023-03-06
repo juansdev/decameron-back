@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property mixed $id
  * @method static find(mixed $department_id)
  * @method static create(array $array)
+ * @method static select(string $string)
  */
 class Department extends Model
 {
