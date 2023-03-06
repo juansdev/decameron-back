@@ -77,9 +77,8 @@ class HotelController extends Controller
      */
     public function changeStatus(Hotel $hotel): JsonResponse
     {
-        $hotel->status = false;
+        $hotel->status = !$hotel->status;
         $hotel->save();
-
         return response()->json(['message' => 'El estado del hotel se actualizo correctamente']);
     }
 }

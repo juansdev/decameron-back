@@ -84,6 +84,7 @@ class RoomAccommodationControllerTest extends TestCase
     {
         // Crea un acomodación de habitación
         $roomAccommodation = RoomAccommodation::factory()->create();
+        $originalStatus = $roomAccommodation->status;
 
         // Envía una petición PUT para cambiar el estado de la acomodación de habitación
         $response = $this->put(route('room-accommodations.changeStatus', $roomAccommodation->id));
@@ -94,7 +95,7 @@ class RoomAccommodationControllerTest extends TestCase
             'message' => 'El estado de la acomodación de la habitación se actualizo correctamente'
         ]);
 
-        // Verifica que se devuelva el estado de la acomodación de habitación sea false
-        $this->assertFalse($roomAccommodation->fresh()->status);
+        // Verifica que se devuelva el estado de la acomodación de habitación sea lo inverso
+        $this->assertEquals(!$originalStatus, $roomAccommodation->fresh()->status);
     }
 }

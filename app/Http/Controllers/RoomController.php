@@ -145,7 +145,7 @@ class RoomController extends Controller
      */
     public function changeStatus(Room $room): JsonResponse
     {
-        $room->status = false;
+        $room->status = !$room->status;
         $room->save();
 
         return response()->json(['message' => 'El estado del cuarto se actualizo correctamente']);

@@ -16,10 +16,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 Route::resource('hotels', HotelController::class);
 Route::put('hotels/{hotel}/status', [HotelController::class, 'changeStatus'])->name('hotels.changeStatus');
 

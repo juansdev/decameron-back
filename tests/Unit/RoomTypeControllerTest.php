@@ -84,6 +84,7 @@ class RoomTypeControllerTest extends TestCase
     {
         // Crea un tipo de habitación
         $roomType = RoomType::factory()->create();
+        $originalStatus = $roomType->status;
 
         // Envía una petición PUT para cambiar el estado del tipo de habitación
         $response = $this->put(route('room-types.changeStatus', $roomType->id));
@@ -94,7 +95,7 @@ class RoomTypeControllerTest extends TestCase
             'message' => 'El estado del tipo de habitación se actualizo correctamente'
         ]);
 
-        // Verifica que se devuelva el estado del tipo de habitación sea false
-        $this->assertFalse($roomType->fresh()->status);
+        // Verifica que se devuelva el estado del tipo de habitación sea lo inverso
+        $this->assertEquals(!$originalStatus, $roomType->fresh()->status);
     }
 }

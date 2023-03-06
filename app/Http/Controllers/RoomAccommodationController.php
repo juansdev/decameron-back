@@ -85,7 +85,7 @@ class RoomAccommodationController extends Controller
      */
     public function changeStatus(RoomAccommodation $roomAccommodation): JsonResponse
     {
-        $roomAccommodation->status = false;
+        $roomAccommodation->status = !$roomAccommodation->status;
         $roomAccommodation->save();
 
         return response()->json(['message' => 'El estado de la acomodación de la habitación se actualizo correctamente']);

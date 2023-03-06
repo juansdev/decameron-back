@@ -126,7 +126,7 @@ class MunicipalHotelController extends Controller
      */
     public function changeStatus(MunicipalHotel $municipalHotel): JsonResponse
     {
-        $municipalHotel->status = false;
+        $municipalHotel->status = !$municipalHotel->status;
         $municipalHotel->save();
 
         return response()->json(['message' => 'El estado del hotel del municipio se actualizo correctamente']);

@@ -4,12 +4,16 @@ namespace Tests\Unit;
 
 use App\Models\Hotel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 
 class HotelControllerTest extends TestCase
 {
     use RefreshDatabase;
+    use WithoutMiddleware;
+
+    // desactivar temporalmente el middleware VerifyCsrfToken
 
     public function testIndex()
     {
@@ -88,6 +92,7 @@ class HotelControllerTest extends TestCase
     {
         // Crea un hotel
         $hotel = Hotel::factory()->create();
+        $originalStatus = $hotel->status;
 
         // Envía una petición PUT para cambiar el estado del hotel
         $response = $this->put(route('hotels.changeStatus', $hotel->id));
@@ -98,7 +103,7 @@ class HotelControllerTest extends TestCase
             'message' => 'El estado del hotel se actualizo correctamente'
         ]);
 
-        // Verifica que se devuelva el estado del hotel sea false
-        $this->assertFalse($hotel->fresh()->status);
+        // Verifica que se devuelva el estado del hotel sea lo inverso
+        $this->assertEquals(!$originalStatus, $hotel->fresh()->status);
     }
 }

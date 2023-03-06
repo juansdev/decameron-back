@@ -88,6 +88,7 @@ class DepartmentControllerTest extends TestCase
     {
         // Crea un departamento
         $department = Department::factory()->create();
+        $originalStatus = $department->status;
 
         // Envía una petición PUT para cambiar el estado del departamento
         $response = $this->put(route('departments.changeStatus', $department->id));
@@ -98,7 +99,7 @@ class DepartmentControllerTest extends TestCase
             'message' => 'El estado del departamento se actualizo correctamente'
         ]);
 
-        // Verifica que se devuelva el estado del departamento sea false
-        $this->assertFalse($department->fresh()->status);
+        // Verifica que se devuelva el estado del departamento sea lo inverso
+        $this->assertEquals(!$originalStatus, $department->fresh()->status);
     }
 }

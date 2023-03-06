@@ -77,9 +77,8 @@ class DepartmentController extends Controller
      */
     public function changeStatus(Department $department): JsonResponse
     {
-        $department->status = false;
+        $department->status = !$department->status;
         $department->save();
-
         return response()->json(['message' => 'El estado del departamento se actualizo correctamente']);
     }
 }

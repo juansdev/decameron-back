@@ -75,7 +75,7 @@ class RoomTypeController extends Controller
      */
     public function changeStatus(RoomType $roomType): JsonResponse
     {
-        $roomType->status = false;
+        $roomType->status = !$roomType->status;
         $roomType->save();
 
         return response()->json(['message' => 'El estado del tipo de habitación se actualizo correctamente']);

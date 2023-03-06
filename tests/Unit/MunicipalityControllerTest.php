@@ -94,6 +94,7 @@ class MunicipalityControllerTest extends TestCase
     {
         // Crea un municipio
         $municipality = Municipality::factory()->create();
+        $originalStatus = $municipality->status;
 
         // Envía una petición PUT para cambiar el estado del municipio
         $response = $this->put(route('municipalities.changeStatus', $municipality->id));
@@ -104,7 +105,7 @@ class MunicipalityControllerTest extends TestCase
             'message' => 'El estado del municipio se actualizo correctamente'
         ]);
 
-        // Verifica que se devuelva el estado del municipio sea false
-        $this->assertFalse($municipality->fresh()->status);
+        // Verifica que se devuelva el estado del municipio sea lo inverso
+        $this->assertEquals(!$originalStatus, $municipality->fresh()->status);
     }
 }

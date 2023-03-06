@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @method static find(mixed $hotel_id)
+ * @property bool|mixed $status
  */
 class Hotel extends Model
 {

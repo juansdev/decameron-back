@@ -100,6 +100,7 @@ class MunicipalHotelControllerTest extends TestCase
     {
         // Crea un municipio
         $municipalHotels = MunicipalHotel::factory()->create();
+        $originalStatus = $municipalHotels->status;
 
         // Envía una petición PUT para cambiar el estado del hotel del municipio
         $response = $this->put(route('municipal-hotels.changeStatus', $municipalHotels->id));
@@ -110,7 +111,7 @@ class MunicipalHotelControllerTest extends TestCase
             'message' => 'El estado del hotel del municipio se actualizo correctamente'
         ]);
 
-        // Verifica que se devuelva el estado del hotel del municipio sea false
-        $this->assertFalse($municipalHotels->fresh()->status);
+        // Verifica que se devuelva el estado del hotel del municipio sea lo inverso
+        $this->assertEquals(!$originalStatus, $municipalHotels->fresh()->status);
     }
 }

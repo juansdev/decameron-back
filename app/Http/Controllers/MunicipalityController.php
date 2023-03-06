@@ -106,7 +106,7 @@ class MunicipalityController extends Controller
      */
     public function changeStatus(Municipality $municipality): JsonResponse
     {
-        $municipality->status = false;
+        $municipality->status = !$municipality->status;
         $municipality->save();
 
         return response()->json(['message' => 'El estado del municipio se actualizo correctamente']);
