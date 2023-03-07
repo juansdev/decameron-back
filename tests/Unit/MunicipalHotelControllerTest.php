@@ -29,42 +29,45 @@ class MunicipalHotelControllerTest extends TestCase
 
     public function testStore()
     {
-        // Crea un municipio de prueba
+        // Crea un hotel del municipio de prueba
         $municipalHotels = MunicipalHotel::factory()->make();
+        $hotel = Hotel::factory()->create();
+        $municipality = Municipality::factory()->create();
+
         $data = [
             'address' => $municipalHotels->address,
             'number_rooms' => $municipalHotels->number_rooms,
-            'hotel_id' => $municipalHotels->hotel_id,
-            'municipality_id' => $municipalHotels->municipality_id,
+            'hotel_id' => $hotel->id,
+            'municipality_id' => $municipality->id,
         ];
         $response = $this->postJson(route('municipal-hotels.store'), $data);
 
-        // Verifica que la respuesta tenga el código de estado correcto (201)
+        // Verífica que la respuesta tenga el código de estado correcto (201)
         $response->assertStatus(Response::HTTP_CREATED);
-        $this->assertDatabaseHas('municipal_hotels', $data);
 
-        // Verifica que se haya creado el hotel del municipio correctamente
+        // Verífica que se haya creado el hotel del municipio correctamente
         $response->assertJsonFragment([
-            'address' => $municipalHotels['address'],
-            'number_rooms' => $municipalHotels['number_rooms'],
-            'hotel_id' => $municipalHotels['hotel_id'],
-            'municipality_id' => $municipalHotels['municipality_id'],
+            'address' => $municipalHotels->address,
+            'number_rooms' => $municipalHotels->number_rooms,
+            'hotel_id' => $hotel->id,
+            'municipality_id' => $municipality->id,
         ]);
+        $this->assertDatabaseHas('municipal_hotels', $data);
     }
 
     public function testShow()
     {
-        // Crea un municipio de prueba
-        $municipalHotels = MunicipalHotel::factory()->create();
+        // Crea un hotel del municipio de prueba
+        $municipalHotel = MunicipalHotel::factory()->create();
 
         // Llama al método show() con el ID del hotel del municipio
-        $response = $this->getJson(route('municipal-hotels.show', $municipalHotels));
+        $response = $this->getJson(route('municipal-hotels.show', $municipalHotel));
 
         // Verifica que la respuesta tenga el código de estado correcto (200)
         $response->assertOk();
 
         // Verifica que se devuelva el hotel del municipio correcto
-        $response->assertJson(['data' => $municipalHotels->toArray()]);
+        $response->assertJson(['data' => $municipalHotel->toArray()]);
     }
 
     public function testUpdate()
@@ -72,7 +75,7 @@ class MunicipalHotelControllerTest extends TestCase
         // Crea un municipio, hotel y hotel del municipio
         $municipality = Municipality::factory()->create(['id' => 1]);
         $hotel = Hotel::factory()->create(['id' => 1]);
-        $municipalHotel = MunicipalHotel::factory()->create();
+        $municipalHotel = MunicipalHotel::factory()->create(['municipality_id' => $municipality->id, 'hotel_id' => $hotel->id]);
         $data = [
             'address' => 'Hotel del Municipio Actualizado',
             'number_rooms' => 1234,
@@ -98,7 +101,7 @@ class MunicipalHotelControllerTest extends TestCase
 
     public function testChangeStatus(): void
     {
-        // Crea un municipio
+        // Crea un hotel del municipio
         $municipalHotels = MunicipalHotel::factory()->create();
         $originalStatus = $municipalHotels->status;
 

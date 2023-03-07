@@ -15,6 +15,10 @@ class DepartmentControllerTest extends TestCase
     {
         // Crea algunos departamentos de prueba
         $departments = Department::factory()->count(3)->create();
+        $arrayDepartments = $departments->toArray();
+        usort($arrayDepartments, function ($a, $b) {
+            return strcmp($a['name'], $b['name']);
+        });
         $response = $this->getJson(route('departments.index'));
 
         // Verifica que la respuesta tenga el código de estado correcto (200)
@@ -22,7 +26,7 @@ class DepartmentControllerTest extends TestCase
         $response->assertJsonCount(3, 'data');
 
         // Verifica que se devuelvan los departamentos correctos
-        $response->assertJson(['data' => $departments->toArray()]);
+        $response->assertJson(['data' => $arrayDepartments]);
     }
 
     public function testStore()

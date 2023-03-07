@@ -16,6 +16,10 @@ class MunicipalityControllerTest extends TestCase
     {
         // Crea algunos municipios de prueba
         $municipalities = Municipality::factory()->count(3)->create();
+        $arrayMunicipalities = $municipalities->toArray();
+        usort($arrayMunicipalities, function ($a, $b) {
+            return strcmp($a['name'], $b['name']);
+        });
         $response = $this->getJson(route('municipalities.index'));
 
         // Verifica que la respuesta tenga el código de estado correcto (200)
@@ -23,7 +27,7 @@ class MunicipalityControllerTest extends TestCase
         $response->assertJsonCount(3, 'data');
 
         // Verifica que se devuelvan los municipios correctos
-        $response->assertJson(['data' => $municipalities->toArray()]);
+        $response->assertJson(['data' => $arrayMunicipalities]);
     }
 
     public function testStore()

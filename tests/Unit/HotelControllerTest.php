@@ -4,14 +4,12 @@ namespace Tests\Unit;
 
 use App\Models\Hotel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 
 class HotelControllerTest extends TestCase
 {
     use RefreshDatabase;
-    use WithoutMiddleware;
 
     // desactivar temporalmente el middleware VerifyCsrfToken
 

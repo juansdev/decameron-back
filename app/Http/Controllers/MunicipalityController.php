@@ -18,8 +18,8 @@ class MunicipalityController extends Controller
     {
         $departmentId = $request->query('department_id');
         $municipalities = Municipality::with('department');
-        if($departmentId) $municipalities->where('department_id', $departmentId)->orderBy('name');
-        $municipalities = $municipalities->get();
+        if($departmentId) $municipalities->where('department_id', $departmentId);
+        $municipalities = $municipalities->orderBy('name')->get();
         return response()->json([
             'data' => $municipalities
         ]);
