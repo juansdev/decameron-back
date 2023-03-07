@@ -17,7 +17,7 @@ class CreateMunicipalHotelsTable extends Migration
             $table->id();
             $table->foreignId('hotel_id')->constrained();
             $table->foreignId('municipality_id')->constrained();
-            $table->string('address')->unique();
+            $table->string('address');
             $table->integer('number_rooms');
             $table->boolean('status')->default(true);
             $table->timestamps();

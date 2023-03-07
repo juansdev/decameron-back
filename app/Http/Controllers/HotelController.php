@@ -30,6 +30,15 @@ class HotelController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string|max:255|unique:hotels,name',
             'nit' => 'required|string|max:255|unique:hotels,nit'
+        ], [
+            'name.required' => 'El nombre es obligatorio',
+            'name.string' => 'El nombre debe ser una cadena de caracteres',
+            'name.max' => 'El nombre no debe ser mayor a :max caracteres',
+            'name.unique' => 'El nombre ya está en uso',
+            'nit.required' => 'El NIT es obligatorio',
+            'nit.string' => 'El NIT debe ser una cadena de caracteres',
+            'nit.max' => 'El NIT no debe ser mayor a :max caracteres',
+            'nit.unique' => 'El NIT ya está en uso'
         ]);
 
         $hotel = Hotel::create($validatedData);
@@ -60,8 +69,18 @@ class HotelController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255|unique:hotels,name,' . $hotel->id,
-            'nit' => 'required|string|max:255|unique:hotels,nit',
+            'nit' => 'required|string|max:255|unique:hotels,nit,' . $hotel->id,
             'status' => 'nullable|boolean'
+        ], [
+            'name.required' => 'El nombre es obligatorio',
+            'name.string' => 'El nombre debe ser una cadena de caracteres',
+            'name.max' => 'El nombre no debe ser mayor a :max caracteres',
+            'name.unique' => 'El nombre ya está en uso',
+            'nit.required' => 'El NIT es obligatorio',
+            'nit.string' => 'El NIT debe ser una cadena de caracteres',
+            'nit.max' => 'El NIT no debe ser mayor a :max caracteres',
+            'nit.unique' => 'El NIT ya está en uso',
+            'status.boolean' => 'El estado debe ser verdadero o falso'
         ]);
 
         $hotel->update($validatedData);

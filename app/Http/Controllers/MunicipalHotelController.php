@@ -34,9 +34,22 @@ class MunicipalHotelController extends Controller
         $validatedData = $request->validate([
             'hotel_id' => 'required|exists:hotels,id',
             'municipality_id' => 'required|exists:municipalities,id',
-            'address' => 'required|string|max:255|unique:municipal_hotels,address',
-            'number_rooms' => 'required|integer',
+            'address' => 'required|string|max:255',
+            'number_rooms' => 'required|integer'
+        ], [
+            'hotel_id.required' => 'El hotel es obligatorio',
+            'hotel_id.exists' => 'El hotel no se encuentra registrado',
+            'municipality_id.required' => 'El municipio es obligatorio',
+            'municipality_id.exists' => 'El municipio no se encuentra registrado',
+            'address.required' => 'La dirección es obligatoria',
+            'address.string' => 'La dirección debe ser una cadena de caracteres',
+            'address.max' => 'La dirección no debe ser mayor a :max caracteres',
+            'number_rooms.required' => 'El número de habitaciones es obligatorio',
+            'number_rooms.integer' => 'El número de habitaciones debe ser un número entero'
         ]);
+        if (MunicipalHotel::where('municipality_id', $validatedData['municipality_id'])->where('address', $validatedData['address'])->exists()) return response()->json([
+            'message' => 'Ya existe un hotel del mismo municipio con la misma dirección'
+        ], 400);
 
         $hotel = Hotel::find($validatedData['hotel_id']);
         $municipality = Municipality::find($validatedData['municipality_id']);
@@ -78,18 +91,31 @@ class MunicipalHotelController extends Controller
      * Update the specified resource in storage.
      *
      * @param Request $request
-     * @param MunicipalHotel $municipalHotels
+     * @param MunicipalHotel $municipalHotel
      * @return JsonResponse
      */
-    public function update(Request $request, MunicipalHotel $municipalHotels): JsonResponse
+    public function update(Request $request, MunicipalHotel $municipalHotel): JsonResponse
     {
         $validatedData = $request->validate([
             'hotel_id' => 'required|exists:hotels,id',
             'municipality_id' => 'required|exists:municipalities,id',
-            'address' => 'required|string|max:255|unique:municipal_hotels,address,' . $municipalHotels->id,
+            'address' => 'required|string|max:255,' . $municipalHotel->id,
             'number_rooms' => 'required|integer',
             'status' => 'nullable|boolean',
+        ], [
+            'hotel_id.required' => 'El hotel es obligatorio',
+            'hotel_id.exists' => 'El hotel no se encuentra registrado',
+            'municipality_id.required' => 'El municipio es obligatorio',
+            'municipality_id.exists' => 'El municipio no se encuentra registrado',
+            'address.required' => 'La dirección es obligatoria',
+            'address.string' => 'La dirección debe ser una cadena de caracteres',
+            'address.max' => 'La dirección no debe ser mayor a :max caracteres',
+            'number_rooms.required' => 'El número de habitaciones es obligatorio',
+            'number_rooms.integer' => 'El número de habitaciones debe ser un número entero'
         ]);
+        if (MunicipalHotel::where('municipality_id', $validatedData['municipality_id'])->where('address', $validatedData['address'])->count() > 1) return response()->json([
+            'message' => 'Ya existe un hotel del mismo municipio con la misma dirección'
+        ], 400);
 
         $hotel = Hotel::find($validatedData['hotel_id']);
         $municipality = Municipality::find($validatedData['municipality_id']);
@@ -105,16 +131,16 @@ class MunicipalHotelController extends Controller
                 ], 404);
         }
 
-        $municipalHotels->address = $validatedData['address'];
-        $municipalHotels->number_rooms = $validatedData['number_rooms'];
-        $municipalHotels->status = $validatedData['status'] ?? true;
-        $municipalHotels->hotel()->associate($hotel);
-        $municipalHotels->municipality()->associate($municipality);
-        $municipalHotels->save();
+        $municipalHotel->address = $validatedData['address'];
+        $municipalHotel->number_rooms = $validatedData['number_rooms'];
+        $municipalHotel->status = $validatedData['status'] ?? true;
+        $municipalHotel->hotel()->associate($hotel);
+        $municipalHotel->municipality()->associate($municipality);
+        $municipalHotel->save();
 
         return response()->json([
             'message' => 'El hotel del municipio fue actualizado correctamente',
-            'data' => $municipalHotels->load(['hotel', 'municipality'])
+            'data' => $municipalHotel->load(['hotel', 'municipality'])
         ]);
     }
 
