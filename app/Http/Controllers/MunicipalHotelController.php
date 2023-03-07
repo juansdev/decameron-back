@@ -157,10 +157,13 @@ class MunicipalHotelController extends Controller
      */
     public function changeStatus(MunicipalHotel $municipalHotel): JsonResponse
     {
-        if (!$municipalHotel->status) {
+        if ($municipalHotel->status) {
             $isExistMunicipalHotel = MunicipalHotel::where('municipality_id', $municipalHotel->municipality_id)->where('address', $municipalHotel->address);
             if ($isExistMunicipalHotel->count() > 1 || $isExistMunicipalHotel->first() && ($isExistMunicipalHotel->first()->id !== $municipalHotel->id)) return response()->json([
                 'message' => 'Ya existe un hotel del mismo municipio con la misma dirección'
+            ], 400);
+            else if (Room::where('municipal_hotel_id', $municipalHotel->id)->where('status', 1)->first()) return response()->json([
+                'message' => 'No es posible editar el Hotel, debido a que tiene dependencias'
             ], 400);
         }
         $municipalHotel->status = !$municipalHotel->status;

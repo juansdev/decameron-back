@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Hotel;
+use App\Models\MunicipalHotel;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -27,22 +28,26 @@ class HotelController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255|unique:hotels,name',
-            'nit' => 'required|string|max:255|unique:hotels,nit'
-        ], [
-            'name.required' => 'El nombre es obligatorio',
-            'name.string' => 'El nombre debe ser una cadena de caracteres',
-            'name.max' => 'El nombre no debe ser mayor a :max caracteres',
-            'name.unique' => 'El nombre ya está en uso',
-            'nit.required' => 'El NIT es obligatorio',
-            'nit.string' => 'El NIT debe ser una cadena de caracteres',
-            'nit.max' => 'El NIT no debe ser mayor a :max caracteres',
-            'nit.unique' => 'El NIT ya está en uso'
-        ]);
+        $hotel = Hotel::where('name', $request->name)->first();
+        $municipalHotel = null;
+        if($hotel) $municipalHotel = MunicipalHotel::where('hotel_id', $hotel->id)->first();
+        if(!$hotel || $municipalHotel){
+            $validatedData = $request->validate([
+                'name' => 'required|string|max:255|unique:hotels,name',
+                'nit' => 'required|string|max:255|unique:hotels,nit'
+            ], [
+                'name.required' => 'El nombre es obligatorio',
+                'name.string' => 'El nombre debe ser una cadena de caracteres',
+                'name.max' => 'El nombre no debe ser mayor a :max caracteres',
+                'name.unique' => 'El nombre ya está en uso',
+                'nit.required' => 'El NIT es obligatorio',
+                'nit.string' => 'El NIT debe ser una cadena de caracteres',
+                'nit.max' => 'El NIT no debe ser mayor a :max caracteres',
+                'nit.unique' => 'El NIT ya está en uso'
+            ]);
 
-        $hotel = Hotel::create($validatedData);
-
+            $hotel = Hotel::create($validatedData);
+        }
         return response()->json(['message' => 'Hotel creado correctamente', 'data' => $hotel], 201);
     }
 

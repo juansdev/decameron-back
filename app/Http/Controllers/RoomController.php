@@ -35,8 +35,6 @@ class RoomController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
-        $municipalHotelId = $request->query('municipal_hotel_id');
-        if ($municipalHotelId) $request->input('municipal_hotel_id', $municipalHotelId);
         $validatedData = $request->validate([
             'municipal_hotel_id' => 'required|exists:municipal_hotels,id',
             'room_type_id' => 'required|exists:room_types,id',
@@ -49,12 +47,9 @@ class RoomController extends Controller
             'room_accommodation_id.required' => 'La acomodación del cuarto es obligatorio',
             'room_accommodation_id.exists' => 'La acomodación del cuarto no se encuentra registrado'
         ]);
+        $municipalHotelId = $request->query('municipal_hotel_id') ? $request->query('municipal_hotel_id') : $validatedData['municipal_hotel_id'];
 
-        if (Room::where('municipal_hotel_id', $municipalHotelId)->where('room_type_id', $validatedData['room_type_id'])->where('room_accommodation_id', $validatedData['room_accommodation_id'])->exists()) return response()->json([
-            'message' => 'Ya existe una habitación del hotel con el mismo tipo de habitación y acomodación'
-        ], 400);
-
-        $municipalHotel = MunicipalHotel::find($validatedData['municipal_hotel_id']);
+        $municipalHotel = MunicipalHotel::find($municipalHotelId);
         $roomType = RoomType::find($validatedData['room_type_id']);
         $roomAccommodation = RoomAccommodation::find($validatedData['room_accommodation_id']);
 
@@ -73,14 +68,15 @@ class RoomController extends Controller
                 ], 404);
         }
 
-        $roomsByHotel = Room::where('municipal_hotel_id', $validatedData['municipal_hotel_id'])->where('status', 1);
-        if ($roomsByHotel->count() >= $municipalHotel->number_rooms)
+        $verifyIfMaxRooms = Room::where('municipal_hotel_id', $municipalHotelId)->where('status', 1)->count();
+        $verifyIfExistRoom = Room::where('municipal_hotel_id', $municipalHotelId)->where('room_type_id', $validatedData['room_type_id'])
+            ->where('room_accommodation_id', $validatedData['room_accommodation_id'])
+            ->first();
+        if ($verifyIfMaxRooms >= $municipalHotel->number_rooms)
             return response()->json([
                 'message' => 'El hotel ya alcanzo el máximo de habitaciones'
             ], 400);
-        else if ($roomsByHotel->where('room_type_id', $validatedData['room_type_id'])
-            ->where('room_accommodation_id', $validatedData['room_accommodation_id'])
-            ->exists())
+        else if ($verifyIfExistRoom)
             return response()->json([
                 'message' => 'El hotel ya cuenta con una habitación del tipo ' . $roomType->name . ' y de acomodación ' . $roomAccommodation->name], 400);
 
