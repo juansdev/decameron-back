@@ -46,6 +46,22 @@ class HotelControllerTest extends TestCase
             'name' => $hotel['name'],
             'nit' => $hotel['nit']
         ]);
+
+        // Verifica que se haya validado correctamente la entrada
+        $response->assertJsonMissingValidationErrors(['name', 'nit']);
+
+        // Crea un hotel con el mismo nombre y diferente nit para probar las validaciones únicas
+        $duplicatedData = [
+            'name' => $hotel['name'],
+            'nit' => $hotel['nit'] . '1'
+        ];
+        $duplicatedResponse = $this->postJson(route('hotels.store'), $duplicatedData);
+
+        // Verifica que la respuesta tenga el código de estado correcto (422)
+        $duplicatedResponse->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+
+        // Verifica que se hayan mostrado los errores de validación únicos
+        $duplicatedResponse->assertJsonFragment(['errors'=>["name" => ["El nombre ya está en uso"]]]);
     }
 
     public function testShow()

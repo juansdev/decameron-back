@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Hotel;
 use App\Models\MunicipalHotel;
+use App\Models\Room;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class HotelController extends Controller
+    class HotelController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -28,10 +29,9 @@ class HotelController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
-        $hotel = Hotel::where('name', $request->name)->first();
-        $municipalHotel = null;
-        if($hotel) $municipalHotel = MunicipalHotel::where('hotel_id', $hotel->id)->first();
-        if(!$hotel || $municipalHotel){
+        $nameHotel = Hotel::where('name', $request->name)->first();
+        $nitHotel = Hotel::where('nit', $request->nit)->first();
+        if(!($nameHotel&&$nitHotel)){
             $validatedData = $request->validate([
                 'name' => 'required|string|max:255|unique:hotels,name',
                 'nit' => 'required|string|max:255|unique:hotels,nit'
@@ -45,9 +45,8 @@ class HotelController extends Controller
                 'nit.max' => 'El NIT no debe ser mayor a :max caracteres',
                 'nit.unique' => 'El NIT ya está en uso'
             ]);
-
             $hotel = Hotel::create($validatedData);
-        }
+        } else $hotel = $nameHotel;
         return response()->json(['message' => 'Hotel creado correctamente', 'data' => $hotel], 201);
     }
 

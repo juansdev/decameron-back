@@ -31,17 +31,17 @@ class RoomControllerTest extends TestCase
     public function testStore()
     {
         // Crea un hotel de prueba
-        $municipalHotel = MunicipalHotel::factory()->create();
+        $municipalHotel = MunicipalHotel::factory()->create(['number_rooms' => 3]);
 
         // Crea un tipo de habitación y una acomodación de prueba
-        $roomType = RoomType::factory()->create();
-        $roomAccommodation = RoomAccommodation::factory()->create();
+        $roomType = RoomType::factory()->create(['id' => 2]);
+        $roomAccommodation = RoomAccommodation::factory()->create(['id' => 3]);
 
         // Crea un arreglo con los datos necesarios para crear una habitación
         $data = [
             'municipal_hotel_id' => $municipalHotel->id,
             'room_type_id' => $roomType->id,
-            'room_accommodation_id' => $roomAccommodation->id
+            'room_accommodation_id' => $roomAccommodation->id,
         ];
 
         // Envía una solicitud POST con los datos y verifica que se cree la habitación correctamente
@@ -54,11 +54,33 @@ class RoomControllerTest extends TestCase
         $response->assertJsonFragment([
             'municipal_hotel_id' => $municipalHotel->id,
             'room_type_id' => $roomType->id,
-            'room_accommodation_id' => $roomAccommodation->id
+            'room_accommodation_id' => $roomAccommodation->id,
         ]);
 
         // Verifica que la habitación se haya guardado en la base de datos
         $this->assertDatabaseHas('rooms', $data);
+
+        // Intenta crear una habitación con el mismo tipo y acomodación en el mismo hotel
+        $response = $this->postJson(route('rooms.store'), $data);
+
+        // Verifica que se haya lanzado el error correcto (400)
+        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+        $response->assertJsonFragment([
+            'message' => 'El hotel ya cuenta con una habitación del tipo ' . $roomType->name . ' y de acomodación ' . $roomAccommodation->name,
+        ]);
+
+        // Intenta crear una habitación con un tipo de habitación inválido para su acomodación
+        $roomType = RoomType::factory()->create(['id' => 1]);
+        $roomAccommodation = RoomAccommodation::factory()->create(['id' => 4]);
+        $data['room_type_id'] = $roomType->id;
+        $data['room_accommodation_id'] = $roomAccommodation->id;
+        $response = $this->postJson(route('rooms.store'), $data);
+
+        // Verifica que se haya lanzado el error correcto (422)
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $response->assertJsonFragment([
+            'errors' => ['room_type_id' => ['Si el tipo de habitación es Estándar, la acomodación debe ser Sencilla o Doble']],
+        ]);
     }
 
     public function testShow()
@@ -131,7 +153,7 @@ class RoomControllerTest extends TestCase
             'municipal_hotel_id' => $room->municipal_hotel_id,
             'room_type_id' => $room->room_type_id,
             'room_accommodation_id' => $room->room_accommodation_id,
-            'status'=>false
+            'status' => false
         ]);
 
         $response = $this->put(route('rooms.changeStatus', $duplicateRoom->id));

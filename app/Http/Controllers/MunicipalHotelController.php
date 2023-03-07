@@ -36,7 +36,7 @@ class MunicipalHotelController extends Controller
             'hotel_id' => 'required|exists:hotels,id',
             'municipality_id' => 'required|exists:municipalities,id',
             'address' => 'required|string|max:255',
-            'number_rooms' => 'required|integer'
+            'number_rooms' => 'required|integer|min:1|max:7'
         ], [
             'hotel_id.required' => 'El hotel es obligatorio',
             'hotel_id.exists' => 'El hotel no se encuentra registrado',
@@ -46,7 +46,9 @@ class MunicipalHotelController extends Controller
             'address.string' => 'La dirección debe ser una cadena de caracteres',
             'address.max' => 'La dirección no debe ser mayor a :max caracteres',
             'number_rooms.required' => 'El número de habitaciones es obligatorio',
-            'number_rooms.integer' => 'El número de habitaciones debe ser un número entero'
+            'number_rooms.integer' => 'El número de habitaciones debe ser un número entero',
+            'number_rooms.min' => 'El número de habitaciones debe ser mayor o igual a :min',
+            'number_rooms.max' => 'El número de habitaciones debe ser menor o igual a :max'
         ]);
         if (MunicipalHotel::where('municipality_id', $validatedData['municipality_id'])->where('address', $validatedData['address'])->exists()) return response()->json([
             'message' => 'Ya existe un hotel del mismo municipio con la misma dirección'
@@ -101,7 +103,7 @@ class MunicipalHotelController extends Controller
             'hotel_id' => 'required|exists:hotels,id',
             'municipality_id' => 'required|exists:municipalities,id',
             'address' => 'required|string|max:255,' . $municipalHotel->id,
-            'number_rooms' => 'required|integer',
+            'number_rooms' => 'required|integer|min:1|max:7',
             'status' => 'nullable|boolean',
         ], [
             'hotel_id.required' => 'El hotel es obligatorio',
@@ -112,7 +114,9 @@ class MunicipalHotelController extends Controller
             'address.string' => 'La dirección debe ser una cadena de caracteres',
             'address.max' => 'La dirección no debe ser mayor a :max caracteres',
             'number_rooms.required' => 'El número de habitaciones es obligatorio',
-            'number_rooms.integer' => 'El número de habitaciones debe ser un número entero'
+            'number_rooms.integer' => 'El número de habitaciones debe ser un número entero',
+            'number_rooms.min' => 'El número de habitaciones debe ser mayor o igual a :min',
+            'number_rooms.max' => 'El número de habitaciones debe ser menor o igual a :max',
         ]);
         $isExistMunicipalHotel = MunicipalHotel::where('municipality_id', $validatedData['municipality_id'])->where('address', $validatedData['address']);
         if ($isExistMunicipalHotel->count() > 1 || $isExistMunicipalHotel->first() && ($isExistMunicipalHotel->first()->id !== $municipalHotel->id)) return response()->json([

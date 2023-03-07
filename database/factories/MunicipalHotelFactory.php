@@ -26,7 +26,7 @@ class MunicipalHotelFactory extends Factory
                 return Municipality::factory()->create()->id;
             },
             'address' => $this->faker->address,
-            'number_rooms' => $this->faker->numberBetween(1, 100),
+            'number_rooms' => $this->faker->numberBetween(1, 7),
             'status' => $this->faker->boolean(),
         ];
     }

@@ -7,6 +7,7 @@ use App\Models\Room;
 use App\Models\RoomAccommodation;
 use App\Models\RoomType;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class RoomController extends Controller
@@ -37,7 +38,19 @@ class RoomController extends Controller
     {
         $validatedData = $request->validate([
             'municipal_hotel_id' => 'required|exists:municipal_hotels,id',
-            'room_type_id' => 'required|exists:room_types,id',
+            'room_type_id' => [
+                'required',
+                'exists:room_types,id',
+                Rule::in([1, 2, 3]),
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($value == 1 && !in_array($request->input('room_accommodation_id'), [1, 2]))
+                        $fail('Si el tipo de habitación es Estándar, la acomodación debe ser Sencilla o Doble');
+                    elseif ($value == 2 && !in_array($request->input('room_accommodation_id'), [3, 4]))
+                        $fail('Si el tipo de habitación es Junior, la acomodación debe ser Triple o Cuádruple');
+                    elseif ($value == 3 && !in_array($request->input('room_accommodation_id'), [1, 2, 3]))
+                        $fail('Si el tipo de habitación es Suite, la acomodación debe ser Sencilla, Doble o Triple');
+                }
+            ],
             'room_accommodation_id' => 'required|exists:room_accommodations,id'
         ], [
             'municipal_hotel_id.required' => 'El hotel es obligatorio',
@@ -113,7 +126,19 @@ class RoomController extends Controller
     {
         $validatedData = $request->validate([
             'municipal_hotel_id' => 'required|exists:municipal_hotels,id',
-            'room_type_id' => 'required|exists:room_types,id',
+            'room_type_id' => [
+                'required',
+                'exists:room_types,id',
+                Rule::in([1, 2, 3]),
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($value == 1 && !in_array($request->input('room_accommodation_id'), [1, 2]))
+                        $fail('Si el tipo de habitación es Estándar, la acomodación debe ser Sencilla o Doble');
+                    elseif ($value == 2 && !in_array($request->input('room_accommodation_id'), [3, 4]))
+                        $fail('Si el tipo de habitación es Junior, la acomodación debe ser Triple o Cuádruple');
+                    elseif ($value == 3 && !in_array($request->input('room_accommodation_id'), [1, 2, 3]))
+                        $fail('Si el tipo de habitación es Suite, la acomodación debe ser Sencilla, Doble o Triple');
+                }
+            ],
             'room_accommodation_id' => 'required|exists:room_accommodations,id',
             'status' => 'nullable|boolean'
         ], [

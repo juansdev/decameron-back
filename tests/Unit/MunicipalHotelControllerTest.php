@@ -78,7 +78,7 @@ class MunicipalHotelControllerTest extends TestCase
         $municipalHotel = MunicipalHotel::factory()->create(['municipality_id' => $municipality->id, 'hotel_id' => $hotel->id]);
         $data = [
             'address' => 'Hotel del Municipio Actualizado',
-            'number_rooms' => 1234,
+            'number_rooms' => $municipalHotel->number_rooms,
             'hotel_id' => $hotel->id,
             'municipality_id' => $municipality->id,
             'status' => false
