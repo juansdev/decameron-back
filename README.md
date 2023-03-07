@@ -1,34 +1,30 @@
-Antes de desplegar este proyecto:
+Antes de desplegar el Backend:
 
-* Asegurarse de que el servicio de PostgreSQL este activo.
-* Tener una base de datos para persistir los datos de este proyecto.
+* Tener Apache y Composer instalados.
+* Asegurase de que el servicio de PostgreSQL este activo y escuchando en un puerto.
+* Tener una base de datos en PostgreSQL para persistir los datos de este proyecto.
 
-Para desplegar este proyecto se debe hacer lo siguiente:
+Para desplegar el Backend se debe hacer lo siguiente:
 
-1. Abrir la consola CMD y ejecutar los siguientes comandos:
+1. Abrir la consola CMD, ubicarse en la raíz del proyecto y ejecutar los siguientes comandos como administrador:
 
 - composer install
 - php artisan key:generate
 
-2. Clonar el .env.example, cambiando solo el nombre de la nueva copia a .env
-   Actualizar los siguientes valores:
+2. Clonar el .env.example, cambiar el nombre de la nueva copia a .env y actualizar los siguientes valores:
 
 - DB_HOST=localhost -> Dominio del Host en el que desea desplegar el Backend
-- DB_PORT=5432 -> Puerto de Postgres
+- DB_PORT=5432 -> El puerto de escucha del servicio de PostgreSQL
 - DB_DATABASE=db_decameron -> Nombre de la base de datos a utilizar de Postgres
 - DB_USERNAME=postgres -> El usuario que tenga el rol de superusuario de Postgres
-- DB_PASSWORD=thor -> La contraseña del usuario
+- DB_PASSWORD=thor -> La contraseña del usuario, dejar vacío si no tiene contraseña
 
-3. Instalar las depedencias de PHP del proyecto, mediante el siguiente comando:
-
-- composer install
-
-4. Verificar que todos los tests pasen correctamente:
+3. Verificar que todos los tests pasen correctamente:
 
 - php artisan test
 - php artisan migrate:fresh --seed --env=testing
 
-5. Si todo esta correcto, hacer los seeders:
+4. Si todo está correcto, ejecutar los seeders:
 
 - php artisan migrate:fresh --seed
 
