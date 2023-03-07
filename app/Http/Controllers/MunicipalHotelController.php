@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Hotel;
 use App\Models\MunicipalHotel;
 use App\Models\Municipality;
+use App\Models\Room;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -113,8 +114,12 @@ class MunicipalHotelController extends Controller
             'number_rooms.required' => 'El número de habitaciones es obligatorio',
             'number_rooms.integer' => 'El número de habitaciones debe ser un número entero'
         ]);
-        if (MunicipalHotel::where('municipality_id', $validatedData['municipality_id'])->where('address', $validatedData['address'])->count() > 1) return response()->json([
+        $isExistMunicipalHotel = MunicipalHotel::where('municipality_id', $validatedData['municipality_id'])->where('address', $validatedData['address']);
+        if ($isExistMunicipalHotel->count() > 1 || $isExistMunicipalHotel->first() && ($isExistMunicipalHotel->first()->id !== $municipalHotel->id)) return response()->json([
             'message' => 'Ya existe un hotel del mismo municipio con la misma dirección'
+        ], 400);
+        else if (Room::where('municipal_hotel_id', $municipalHotel->id)->where('status', 1)->first()) return response()->json([
+            'message' => 'No es posible editar el Hotel, debido a que tiene dependencias'
         ], 400);
 
         $hotel = Hotel::find($validatedData['hotel_id']);
@@ -152,6 +157,12 @@ class MunicipalHotelController extends Controller
      */
     public function changeStatus(MunicipalHotel $municipalHotel): JsonResponse
     {
+        if (!$municipalHotel->status) {
+            $isExistMunicipalHotel = MunicipalHotel::where('municipality_id', $municipalHotel->municipality_id)->where('address', $municipalHotel->address);
+            if ($isExistMunicipalHotel->count() > 1 || $isExistMunicipalHotel->first() && ($isExistMunicipalHotel->first()->id !== $municipalHotel->id)) return response()->json([
+                'message' => 'Ya existe un hotel del mismo municipio con la misma dirección'
+            ], 400);
+        }
         $municipalHotel->status = !$municipalHotel->status;
         $municipalHotel->save();
 

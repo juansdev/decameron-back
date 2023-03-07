@@ -73,8 +73,8 @@ class RoomController extends Controller
                 ], 404);
         }
 
-        $roomsByHotel = Room::where('municipal_hotel_id', $validatedData['municipal_hotel_id']);
-        if ($roomsByHotel->count() > $municipalHotel->number_rooms)
+        $roomsByHotel = Room::where('municipal_hotel_id', $validatedData['municipal_hotel_id'])->where('status', 1);
+        if ($roomsByHotel->count() >= $municipalHotel->number_rooms)
             return response()->json([
                 'message' => 'El hotel ya alcanzo el máximo de habitaciones'
             ], 400);
@@ -115,8 +115,6 @@ class RoomController extends Controller
      */
     public function update(Request $request, Room $room): JsonResponse
     {
-        $municipalHotelId = $request->query('municipal_hotel_id');
-        if ($municipalHotelId) $request->input('municipal_hotel_id', $municipalHotelId);
         $validatedData = $request->validate([
             'municipal_hotel_id' => 'required|exists:municipal_hotels,id',
             'room_type_id' => 'required|exists:room_types,id',
@@ -130,7 +128,8 @@ class RoomController extends Controller
             'room_accommodation_id.required' => 'La acomodación del cuarto es obligatorio',
             'room_accommodation_id.exists' => 'La acomodación del cuarto no se encuentra registrado'
         ]);
-        if (Room::where('municipal_hotel_id', $municipalHotelId)->where('room_type_id', $validatedData['room_type_id'])->where('room_accommodation_id', $validatedData['room_accommodation_id'])->count() > 1) return response()->json([
+        $isExistRoom = Room::where('municipal_hotel_id', $request->input('municipal_hotel_id'))->where('room_type_id', $validatedData['room_type_id'])->where('room_accommodation_id', $validatedData['room_accommodation_id']);
+        if ($isExistRoom->count() > 1 || $isExistRoom->first() && ($isExistRoom->first()->id !== $room->id)) return response()->json([
             'message' => 'Ya existe una habitación del hotel con el mismo tipo de habitación y acomodación'
         ], 400);
 
@@ -173,6 +172,18 @@ class RoomController extends Controller
      */
     public function changeStatus(Room $room): JsonResponse
     {
+        if (!$room->status) {
+            $isExistRoom = Room::where('municipal_hotel_id', $room->municipal_hotel_id)->where('room_type_id', $room->room_type_id)->where('room_accommodation_id', $room->room_accommodation_id);
+            if ($isExistRoom->count() > 1 || $isExistRoom->first() && ($isExistRoom->first()->id !== $room->id)) return response()->json([
+                'message' => 'Ya existe una habitación del hotel con el mismo tipo de habitación y acomodación'
+            ], 400);
+            $municipalHotel = MunicipalHotel::find($room->municipal_hotel_id);
+            $roomsByHotel = Room::where('municipal_hotel_id', $room->municipal_hotel_id)->where('status', 1);
+            if ($roomsByHotel->count() >= $municipalHotel->number_rooms)
+                return response()->json([
+                    'message' => 'El hotel ya alcanzo el máximo de habitaciones'
+                ], 400);
+        }
         $room->status = !$room->status;
         $room->save();
 
